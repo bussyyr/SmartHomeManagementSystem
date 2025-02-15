@@ -1,0 +1,120 @@
+type Query{
+    getDeviceById(id: ID!): Device
+    getAllDevices: [Device!]!
+
+    getUserById(userId: ID!): User
+    getAllUsers: [User!]!
+    getUserByEmail(email:String!): User
+    getUserByName(name:String!): User
+
+    getRoomById(id: ID!): Room
+    getAllRooms: [Room!]!
+
+    getEnergyReportsById(id: ID!): EnergyReport
+    getEnergyReportsByDate(date: String!): EnergyReport
+    getAllEnergyReports: [EnergyReport!]!
+
+    getAutomationRuleById(id: ID!): AutomationRule
+    getAllAutomationRule: [AutomationRule!]!
+
+}
+
+type Mutation{
+    createDevice(DeviceInput: DeviceInput!): Device!
+    updateDevice(id: ID!, input: DeviceInput!): Device!
+    deleteDevice(id: ID!): Boolean!
+
+    createUser(UserInput: UserInput!): User!
+    updateUser(id: ID!, input: UserInput!): User!
+    deleteUser(id: ID!): Boolean!
+
+    createAutomationRule(AutomationRuleInput: AutomationRuleInput!): AutomationRule!
+    updateAutomationRule(id: ID!, input: AutomationRuleInput!): AutomationRule!
+    deleteAutomationRule(id: ID!): Boolean!
+
+    createEnergyReport(EnergyReportInput: EnergyReportInput!): EnergyReport!
+    deleteEnergyReport(id: ID!): Boolean!
+
+    createRoom(RoomInput: RoomInput!): Room!
+    updateRoom(id: ID!, input: RoomInput!): Room!
+    deleteRoom(id: ID!): Boolean!
+}
+
+
+type Device{
+    deviceId: ID!
+    name: String!
+    totalConsumptionPerHour: Float!
+    dailyConsumption: Float!
+    room: Room
+    status: Boolean!
+    energyReports: [EnergyReport!]
+    automationRule: AutomationRule
+    lastTurnOnTime: String
+}
+
+input DeviceInput{
+    totalConsumptionPerHour: Float!
+    roomId: ID
+    name: String!
+}
+
+#Room
+type Room{
+    roomId: ID!
+    name: String!
+    devices:[Device!]
+}
+
+input RoomInput{
+    name: String!
+}
+
+#User
+type User{
+    userId: ID!
+    name: String!
+    email: String!
+    password: String!
+    automationRules:[AutomationRule!]
+}
+
+input UserInput{
+    name: String!
+    email: String!
+    password: String!
+}
+
+enum AutomationRuleType {
+    TIME
+    CONSUMPTION
+}
+
+type AutomationRule {
+    automationRuleId: ID!
+    name: String!
+    ruleType: AutomationRuleType!
+    consumptionLimit: Float
+    devices: [Device]!
+}
+
+input AutomationRuleInput {
+    name: String!
+    ruleType: AutomationRuleType!
+    devices: [ID]!
+    consumptionLimit: Float
+}
+
+#Energy Report
+
+type EnergyReport{
+    energyReportId:ID!
+    device: Device!
+    date: String!
+    totalConsumption: Float!
+}
+
+input EnergyReportInput{
+    device:ID!
+    totalConsumption: Float!
+}
